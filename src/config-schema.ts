@@ -3,7 +3,7 @@ import { Type } from '@openmrs/esm-framework';
 export const configSchema = {
   medicalSupplyOrderTypeUuid: {
     _type: Type.UUID,
-    _default: "2315ab24-9a4e-4b36-b189-8e74d2c77394",
+    _default: "58ea528c-8f62-45f0-86a2-f7d1327b8c56",
     _description: ""
   },
   medicalSupplyServiceTypedUuid: {

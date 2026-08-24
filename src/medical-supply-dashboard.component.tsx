@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { Assessment1Pictogram, PageHeader, useDefineAppContext } from '@openmrs/esm-framework';
+import { PageHeader, StockManagementPictogram, useDefineAppContext } from '@openmrs/esm-framework';
 import { type DateFilterContext } from './types';
 import styles from './medical-supply-dashboard.scss';
 import MedicalSupplySummaryTiles from './summary/medical-supply-summary-tiles.component';
@@ -15,8 +15,8 @@ const MedicalSupplyDashboard: React.FC = () => {
   return (
     <div>
       <PageHeader
-        illustration={<Assessment1Pictogram />}
-        title={t('medicalSupply', 'MedicalSupply')}
+        illustration={<StockManagementPictogram />}
+        title={t('medicalSupply', 'Medical supply')}
         className={styles.pageHeader}
       />
       <div>
