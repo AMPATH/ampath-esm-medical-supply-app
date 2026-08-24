@@ -18,15 +18,15 @@ const GenerateBillRequestAction: React.FC<GenerateBillRequestActionMenuProps> = 
   mutated,
 }) => {
   const { t } = useTranslation();
-  const { proceduresServiceTypedUuid } = useConfig<Config>();
+  const { medicalSupplyServiceTypedUuid } = useConfig<Config>();
 
   const launchBillWorkspace = () => {
     launchWorkspace('create-order-bill-form-workspace', {
       workspaceTitle: t('createOrderBill', 'Create order bill form'),
       order,
       quantity: 1,
-      serviceTypeUuid: proceduresServiceTypedUuid,
-      servicePointName: "PROCEDURES",
+      serviceTypeUuid: medicalSupplyServiceTypedUuid,
+      servicePointName: "MEDICAL SUPPLY",
       mutated,
     });
   };

@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
 import { showNotification, showSnackbar, useAbortController, type Order } from '@openmrs/esm-framework';
-import { setFulfillerStatus, useInvalidateProcedureOrders } from '../resources/procedures.resources';
+import { setFulfillerStatus, useInvalidateMedicalSupplyOrders } from '../resources/medical-supply.resources';
 
-interface PickupProcedureRequestModal {
+interface PickupMedicalSupplyRequestModal {
   closeModal: () => void;
   order: Order;
 }
 
-const PickupProcedureRequestModal: React.FC<PickupProcedureRequestModal> = ({ order, closeModal }) => {
+const PickupMedicalSupplyRequestModal: React.FC<PickupMedicalSupplyRequestModal> = ({ order, closeModal }) => {
   const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const abortController = useAbortController();
-  const invalidateOrders = useInvalidateProcedureOrders();
+  const invalidateOrders = useInvalidateMedicalSupplyOrders();
 
   const handlePickup = () => {
     setIsSubmitting(true);
@@ -43,11 +43,11 @@ const PickupProcedureRequestModal: React.FC<PickupProcedureRequestModal> = ({ or
 
   return (
     <div>
-      <ModalHeader closeModal={closeModal} title={t('procedureRequest', 'Procedure request')} />
+      <ModalHeader closeModal={closeModal} title={t('medicalSupplyRequest', 'MedicalSupply request')} />
       <ModalBody>
         <p>
           {t(
-            'procedureRequestConfirmation',
+            'medicalSupplyRequestConfirmation',
             'Selecting Continue will move the ticket to "In Progress". Do you wish to proceed?',
           )}
         </p>
@@ -57,11 +57,11 @@ const PickupProcedureRequestModal: React.FC<PickupProcedureRequestModal> = ({ or
           {t('discard', 'Discard')}
         </Button>
         <Button type="submit" onClick={handlePickup} disabled={isSubmitting}>
-          {t('pickupProcedureRequest', 'Pick up procedure request')}
+          {t('pickupMedicalSupplyRequest', 'Pick up medical supply request')}
         </Button>
       </ModalFooter>
     </div>
   );
 };
 
-export default PickupProcedureRequestModal;
+export default PickupMedicalSupplyRequestModal;

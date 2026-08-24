@@ -1,1 +1,1 @@
-Ampath Procedures app
+Ampath Medical Supply app

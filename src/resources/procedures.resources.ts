@@ -6,15 +6,15 @@ import { useCallback, useEffect, useState } from "react";
 import { type QueueEntryResult, type DateFilterContext } from "../types";
 import { getEtlBaseUrl } from "../utils/utils";
 
-export function useProcedureOrders(status: string) {
-  const { dateRange } = useAppContext<DateFilterContext>('procedures-date-filter') ?? {
+export function useMedicalSupplyOrders(status: string) {
+  const { dateRange } = useAppContext<DateFilterContext>('medical-supply-date-filter') ?? {
     dateRange: [dayjs().startOf('day').toDate(), new Date()],
   };
   const { sessionLocation } = useSession();
 
-  const { procedureOrderTypeUuid } = useConfig<Config>();
+  const { medicalSupplyOrderTypeUuid } = useConfig<Config>();
   const customRepresentation = `custom:(uuid,orderNumber,patient:(uuid,display,person:(uuid,display,age,birthdate,gender,attributes),identifiers),concept:(uuid,display),action,careSetting:(uuid,display,description,careSettingType,display),previousOrder,dateActivated,scheduledDate,dateStopped,autoExpireDate,encounter:(uuid,display,location:(uuid)),orderer:(uuid,display),orderReason,orderReasonNonCoded,orderType:(uuid,display,name,description,conceptClasses,parent),urgency,instructions,commentToFulfiller,display,fulfillerStatus,fulfillerComment,accessionNumber)`;
-  let url = `${restBaseUrl}/order?orderTypes=${procedureOrderTypeUuid}&v=${customRepresentation}`;
+  let url = `${restBaseUrl}/order?orderTypes=${medicalSupplyOrderTypeUuid}&v=${customRepresentation}`;
   url = `${url}&fulfillerStatus=${status}`;
   url = `${url}&excludeCanceledAndExpired=true&excludeDiscontinueOrders=true`;
   url = dateRange
@@ -85,7 +85,7 @@ export function setFulfillerStatus(orderId: string, status: string, abortControl
   });
 }
 
-export function rejectProcedureOrder(orderId: string, comment: string, abortController: AbortController) {
+export function rejectMedicalSupplyOrder(orderId: string, comment: string, abortController: AbortController) {
   return openmrsFetch(`${restBaseUrl}/order/${orderId}/fulfillerdetails/`, {
     method: 'POST',
     headers: {
@@ -99,14 +99,14 @@ export function rejectProcedureOrder(orderId: string, comment: string, abortCont
   });
 }
 
-export function useInvalidateProcedureOrders() {
-  const { procedureOrderTypeUuid } = useConfig<Config>();
+export function useInvalidateMedicalSupplyOrders() {
+  const { medicalSupplyOrderTypeUuid } = useConfig<Config>();
 
   return useCallback(() => {
     mutate(
-      (key) => typeof key === 'string' && key.startsWith(`${restBaseUrl}/order?orderTypes=${procedureOrderTypeUuid}`),
+      (key) => typeof key === 'string' && key.startsWith(`${restBaseUrl}/order?orderTypes=${medicalSupplyOrderTypeUuid}`),
       undefined,
       { revalidate: true },
     );
-  }, [procedureOrderTypeUuid]);
+  }, [medicalSupplyOrderTypeUuid]);
 }

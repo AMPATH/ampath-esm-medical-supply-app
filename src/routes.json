@@ -7,110 +7,110 @@
   "pages": [
     {
       "component": "root",
-      "route": "procedures"
+      "route": "medical-supply"
     }
   ],
   "extensions": [
     {
-      "name": "procedures-dashboard-link",
-      "component": "proceduresDashboardLink",
+      "name": "medical-supply-dashboard-link",
+      "component": "medicalSupplyDashboardLink",
       "slot": "homepage-dashboard-slot",
-      "privileges": ["O3 View Procedures Dashboard"],
+      "privileges": ["O3 View Medical Supply Dashboard"],
       "meta": {
-        "name": "procedures",
-        "slot": "procedures-dashboard-slot",
-        "title": "Procedures"
+        "name": "medical-supply",
+        "slot": "medical-supply-dashboard-slot",
+        "title": "Medical Supply"
       },
       "online": true,
       "offline": true
     },
     {
       "component": "root",
-      "name": "procedures",
-      "slot": "procedures-dashboard-slot",
-      "privileges": ["O3 View Procedures Dashboard"]
+      "name": "medical-supply",
+      "slot": "medical-supply-dashboard-slot",
+      "privileges": ["O3 View Medical supply Dashboard"]
     },
     {
-      "name": "pickup-procedure-request-modal",
-      "component": "pickupProcedureRequestModal"
+      "name": "pickup-medical-supply-request-modal",
+      "component": "pickupMedicalSupplyRequestModal"
     },
     {
-      "name": "reject-procedure-request-modal",
-      "component": "rejectProcedureRequestModal"
+      "name": "reject-medical-supply-request-modal",
+      "component": "rejectMedicalSupplyRequestModal"
     },
     {
-      "name": "pick-procedure-request-action",
-      "component": "pickupProcedureRequestAction",
-      "slot": "procedures-ordered-actions-slot"
+      "name": "pick-medical-supply-request-action",
+      "component": "pickupMedicalSupplyRequestAction",
+      "slot": "medical-supply-ordered-actions-slot"
     },
     {
-      "name": "generate-procedure-bill-request-action",
+      "name": "generate-medical-supply-bill-request-action",
       "component": "generateBillRequestAction",
-      "slot": "procedures-ordered-actions-slot"
+      "slot": "medical-supply-ordered-actions-slot"
     },
     {
-      "name": "reject-procedure-request-action",
-      "component": "rejectProcedureRequestAction",
-      "slot": "rejected-ordered-procedures-actions-slot"
+      "name": "reject-medical-supply-request-action",
+      "component": "rejectMedicalSupplyRequestAction",
+      "slot": "rejected-ordered-medical-supply-actions-slot"
     },
     {
-      "name": "add-procedure-request-results-action",
-      "component": "addProcedureRequestResultsAction",
-      "slot": "inprogress-procedure-tests-actions-slot"
+      "name": "add-medical-supply-request-results-action",
+      "component": "addMedicalSupplyRequestResultsAction",
+      "slot": "inprogress-medical-supply-tests-actions-slot"
     },
     {
-      "name": "ordered-procedure-requests-table",
-      "slot": "procedure-panels-slot",
+      "name": "ordered-medical-supply-requests-table",
+      "slot": "medical-supply-panels-slot",
       "order": 0,
       "component": "orderedRequestsTable",
       "meta": {
-        "name": "orderedProceduresPanel",
-        "title": "Procedures ordered"
+        "name": "orderedMedicalSupplyPanel",
+        "title": "Medical supplies ordered"
       }
     },
     {
-      "name": "inprogress-procedure-requests-table",
-      "slot": "procedure-panels-slot",
+      "name": "inprogress-medical-supply-requests-table",
+      "slot": "medical-supply-panels-slot",
       "component": "inprogressRequestsTable",
       "order": 1,
       "meta": {
-        "name": "inprogressProceduresPanel",
+        "name": "inprogressMedicalSupplyPanel",
         "title": "In progress"
       }
     },
     {
-      "name": "completed-procedure-requests-table",
-      "slot": "procedure-panels-slot",
+      "name": "completed-medical-supply-requests-table",
+      "slot": "medical-supply-panels-slot",
       "component": "completedRequestsTable",
       "order": 2,
       "meta": {
-        "name": "completedProceduresPanel",
+        "name": "completedMedicalSupplyPanel",
         "title": "Completed"
       }
     },
     {
-      "name": "declined-procedure-requests-table",
-      "slot": "procedure-panels-slot",
+      "name": "declined-medical-supply-requests-table",
+      "slot": "medical-supply-panels-slot",
       "component": "declinedRequestsTable",
       "order": 3,
       "meta": {
-        "name": "declinedProceduresPanel",
+        "name": "declinedMedicalSupplyPanel",
         "title": "Declined"
       }
     },
     {
-      "name": "ordered-procedure-requests-tile",
-      "slot": "procedure-tiles-slot",
+      "name": "ordered-medical-supply-requests-tile",
+      "slot": "medical-supply-tiles-slot",
       "component": "orderedRequestsTile",
       "order": 0,
       "meta": {
         "name": "orderedRequestsTile",
-        "title": "Procedures ordered"
+        "title": "Medical Supplies ordered"
       }
     },
     {
-      "name": "inprogress-procedure-requests-tile",
-      "slot": "procedure-tiles-slot",
+      "name": "inprogress-medical-supply-requests-tile",
+      "slot": "medical-supply-tiles-slot",
       "component": "inProgressRequestsTile",
       "order": 1,
       "meta": {
@@ -119,8 +119,8 @@
       }
     },
     {
-      "name": "completed-procedure-requests-tile",
-      "slot": "procedure-tiles-slot",
+      "name": "completed-medical-supply-requests-tile",
+      "slot": "medical-supply-tiles-slot",
       "component": "completedRequestsTile",
       "order": 2,
       "meta": {
@@ -129,21 +129,21 @@
       }
     },
     {
-      "name": "declined-procedure-requests-tile",
-      "slot": "procedure-tiles-slot",
+      "name": "declined-medical-supply-requests-tile",
+      "slot": "medical-supply-tiles-slot",
       "component": "declinedRequestsTile",
       "order": 3,
       "meta": {
         "name": "declinedRequestsTile",
-        "title": "Declined procedures"
+        "title": "Declined medical supplies"
       }
     }
   ],
   "workspaces": [
     {
-      "name": "post-procedure-form-workspace",
-      "component": "postProcedureForm",
-      "title": "procedure results",
+      "name": "post-medical-supply-form-workspace",
+      "component": "postMedicalSupplyForm",
+      "title": "Medical supply results",
       "type": "other-form"
     }
   ]

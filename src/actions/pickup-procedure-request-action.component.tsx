@@ -5,17 +5,17 @@ import { showModal, type Order } from '@openmrs/esm-framework';
 import styles from './actions.scss';
 import { type BillStatus } from '../types';
 
-interface PickProcedureRequestActionMenuProps {
+interface PickMedicalSupplyRequestActionMenuProps {
   order: Order;
   billStatus: BillStatus;
 }
 
-const PickupProcedureRequestAction: React.FC<PickProcedureRequestActionMenuProps> = ({ order, billStatus }) => {
+const PickupMedicalSupplyRequestAction: React.FC<PickMedicalSupplyRequestActionMenuProps> = ({ order, billStatus }) => {
   const { t } = useTranslation();
   const unsupportedStatuses = ['COMPLETED', 'DECLINED', 'IN_PROGRESS', 'ON_HOLD'];
 
   const launchModal = useCallback(() => {
-    const dispose = showModal('pickup-procedure-request-modal', {
+    const dispose = showModal('pickup-medical-supply-request-modal', {
       closeModal: () => dispose(),
       order,
     });
@@ -30,9 +30,9 @@ const PickupProcedureRequestAction: React.FC<PickProcedureRequestActionMenuProps
       key={order.uuid}
       onClick={launchModal}
     >
-      {t('pickProcedureRequest', 'Pick procedure request')}
+      {t('pickMedicalSupplyRequest', 'Pick medical supply request')}
     </Button>
   ) : null;
 };
 
-export default PickupProcedureRequestAction;
+export default PickupMedicalSupplyRequestAction;

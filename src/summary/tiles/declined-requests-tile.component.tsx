@@ -1,17 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProcedureOrders } from '../../resources/procedures.resources';
+import { useMedicalSupplyOrders } from '../../resources/medical-supply.resources';
 import SummaryTile from '../summary-tile/summary-tile.component';
 
 const DeclinedRequestsTile = () => {
   const { t } = useTranslation();
-   const { orders } = useProcedureOrders("DECLINED");
+   const { orders } = useMedicalSupplyOrders("DECLINED");
 
   return (
     <SummaryTile
       label={t('declined', 'Declined')}
       value={orders?.length}
-      headerLabel={t('proceduresDeclined', 'Procedures declined')}
+      headerLabel={t('medicalSupplyDeclined', 'Medical supply declined')}
     />
   );
 };

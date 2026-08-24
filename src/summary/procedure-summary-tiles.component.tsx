@@ -5,10 +5,10 @@ import { type AssignedExtension, useAssignedExtensions, Extension } from '@openm
 // in a custom layout (CSS grid tiles) without the wrapper div that ExtensionSlot adds.
 // eslint-disable-next-line no-restricted-imports
 import { ComponentContext } from '@openmrs/esm-framework/src/internal';
-import styles from './procedure-summary-tiles.scss';
+import styles from './medical-supply-summary-tiles.scss';
 
-const ProcedureSummaryTiles: React.FC = () => {
-  const tileSlot = 'procedure-tiles-slot';
+const MedicalSupplySummaryTiles: React.FC = () => {
+  const tileSlot = 'medical-supply-tiles-slot';
   const tilesExtensions = useAssignedExtensions(tileSlot) as AssignedExtension[];
 
   const filteredExtensions = tilesExtensions.filter((extension) => {
@@ -27,7 +27,7 @@ const ProcedureSummaryTiles: React.FC = () => {
             key={extension.id}
             value={{
               moduleName: extension.moduleName,
-              featureName: 'procedure',
+              featureName: 'medical-supply',
               extension: {
                 extensionId: extension.id,
                 extensionSlotName: tileSlot,
@@ -43,4 +43,4 @@ const ProcedureSummaryTiles: React.FC = () => {
   );
 };
 
-export default ProcedureSummaryTiles;
+export default MedicalSupplySummaryTiles;

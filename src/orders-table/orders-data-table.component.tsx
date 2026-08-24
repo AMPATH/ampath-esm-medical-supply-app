@@ -26,7 +26,7 @@ import { ExtensionSlot, formatDate, parseDate, showModal, useConfig, usePaginati
 import { useTranslation } from 'react-i18next';
 import { type FulfillerStatus, type FlattenedOrder, type Order } from '../types';
 import { type Config } from '../config-schema';
-import { useProcedureOrders, useQueueEntries } from '../resources/procedures.resources';
+import { useMedicalSupplyOrders, useQueueEntries } from '../resources/medical-supply.resources';
 import { OrdersDateRangePicker } from './orders-date-range-picker.component';
 import ListOrderDetails from './list-order-details.component';
 import styles from './orders-data-table.scss';
@@ -92,7 +92,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
   const { queueEntries } = useQueueEntries();
   const { patientIdIdentifierTypeUuid, personAttributeTypeUuid } = useConfig<Config>();
 
-  const { orders, isLoading } = useProcedureOrders(
+  const { orders, isLoading } = useMedicalSupplyOrders(
     props.status
   );
 
@@ -309,7 +309,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
             <div className={styles.tileContainer}>
               <Tile className={styles.tile}>
                 <div className={styles.tileContent}>
-                  <p className={styles.content}>{t('noProcedureRequestsFound', 'No procedure requests found')}</p>
+                  <p className={styles.content}>{t('noMedicalSupplyRequestsFound', 'No medical supply requests found')}</p>
                   <p className={styles.emptyStateHelperText}>
                     {t('checkFilters', 'Please check the filters above and try again')}
                   </p>

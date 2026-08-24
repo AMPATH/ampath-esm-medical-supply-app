@@ -22,43 +22,40 @@ import {
   Tag,
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
-import styles from "./post-procedure-form.scss";
+import styles from "./post-medical-supply-form.scss";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  savePostProcedure,
   updateOrder,
   useConditionsSearch,
   useProvidersSearch,
-} from "./post-procedure.resource";
-import dayjs from "dayjs";
-import { mutate } from "swr";
+} from "./post-medical-supply.resource";
 import { type CodedCondition, type CodedProvider, type Order } from "../../types";
 import { type Config, StringPath } from "../../config-schema";
-import { useInvalidateProcedureOrders } from "../../resources/procedures.resources";
+import { useInvalidateMedicalSupplyOrders } from "../../resources/medical-supply.resources";
 
 const validationSchema = z.object({
   startDatetime: z.date({ required_error: "Start datetime is required" }),
   endDatetime: z.date({ required_error: "End datetime is required" }),
   outcome: z.string({ required_error: "Outcome is required" }),
-  procedureReport: z.string({ required_error: "Procedure report is required" }),
+  medicalSupplyReport: z.string({ required_error: "Medical supply report is required" }),
   participants: z.string().optional(),
   complications: z.string().optional(),
 });
 
-type PostProcedureFormSchema = z.infer<typeof validationSchema>;
+type PostMedicalSupplyFormSchema = z.infer<typeof validationSchema>;
 
-type PostProcedureFormProps = {
+type PostMedicalSupplyFormProps = {
   order: Order;
 };
 
-const PostProcedureForm: React.FC<PostProcedureFormProps> = ({
+const PostMedicalSupplyForm: React.FC<PostMedicalSupplyFormProps> = ({
   order
 }) => {
   const { sessionLocation } = useSession();
   const { t } = useTranslation();
-  const invalidateOrders = useInvalidateProcedureOrders();
+  const invalidateOrders = useInvalidateMedicalSupplyOrders();
 
   const [providerSearchTerm, setProviderSearchTerm] = useState("");
   const debouncedProviderSearchTerm = useDebounce(providerSearchTerm);
@@ -114,14 +111,10 @@ const PostProcedureForm: React.FC<PostProcedureFormProps> = ({
   }, []);
 
   const {
-    procedureOrderTypeUuid
-  } = useConfig<Config>();
-
-  const {
     control,
     formState: { errors },
     handleSubmit,
-  } = useForm<PostProcedureFormSchema>({
+  } = useForm<PostMedicalSupplyFormSchema>({
     defaultValues: {},
     resolver: zodResolver(validationSchema),
   });
@@ -133,7 +126,7 @@ const PostProcedureForm: React.FC<PostProcedureFormProps> = ({
     []
   );
 
-  const onSubmit = async (data: PostProcedureFormSchema) => {
+  const onSubmit = async (data: PostMedicalSupplyFormSchema) => {
     if (!data.startDatetime || !data.endDatetime) {
       // Handle the error case when dates are invalid or missing
       showSnackbar({
@@ -148,21 +141,21 @@ const PostProcedureForm: React.FC<PostProcedureFormProps> = ({
 
     const payload = {
       // patient: patientUuid,
-      // procedureOrder: procedure.uuid,
-      // concept: procedure.concept.uuid,
-      // procedureReason: procedure.orderReason?.uuid,
-      // category: procedure.orderType?.uuid,
+      // medicalSupplyOrder: medicalSupply.uuid,
+      // concept: medicalSupply.concept.uuid,
+      // medicalSupplyReason: medicalSupply.orderReason?.uuid,
+      // category: medicalSupply.orderType?.uuid,
       // status: "COMPLETED",
       // outcome: data.outcome,
       // location: sessionLocation?.uuid,
       // startDatetime: dayjs(data.startDatetime).format("YYYY-MM-DDTHH:mm:ss"),
       // endDatetime: dayjs(data.endDatetime).format("YYYY-MM-DDTHH:mm:ss"),
-      // procedureReport: data.procedureReport,
+      // medicalSupplyReport: data.medicalSupplyReport,
       // encounters: [
       //   {
       //     encounterDatetime: new Date(),
       //     patient: patientUuid,
-      //     encounterType: procedureResultEncounterType,
+      //     encounterType: medicalSupplyResultEncounterType,
       //     encounterProviders: participants,
       //     obs: complications,
       //   },
@@ -173,29 +166,23 @@ const PostProcedureForm: React.FC<PostProcedureFormProps> = ({
       fulfillerStatus: "COMPLETED",
     };
     try {
-      // const response = await savePostProcedure(payload);
-      // if (
-      //   response.status === 201
-      // ) {
-
-      // } 
       updateOrder(order.uuid, body) &&
         showSnackbar({
-          title: t("procedureSaved", "Procedure saved"),
+          title: t("medicalSupplyDispensed", "Medical supply dispensed"),
           subtitle: t(
-            "procedureSavedSuccessfully",
-            "Procedure saved successfully"
+            "medicalSupplyDispensedSuccessfully",
+            "Medical supply dispensed successfully"
           ),
           timeoutInMs: 5000,
           isLowContrast: true,
           kind: "success",
         });
       invalidateOrders();
-      closeWorkspace('post-procedure-form-workspace');
+      closeWorkspace('post-medical-supply-form-workspace');
     } catch (error) {
       showSnackbar({
         title: t("error", "Error"),
-        subtitle: t("errorSavingProcedure", "Error saving procedure"),
+        subtitle: t("errorDispensingMedicalSupply", "Error dispensing medical supply"),
         timeoutInMs: 5000,
         isLowContrast: true,
         kind: "error",
@@ -249,7 +236,7 @@ const PostProcedureForm: React.FC<PostProcedureFormProps> = ({
         </Layer>
         <Layer>
           <FormLabel className={styles.formLabel}>
-            {t("procedureOutcome", "Procedure outcome")}
+            {t("medicalSupplyOutcome", "Medical supply outcome")}
           </FormLabel>
           <Controller
             control={control}
@@ -280,23 +267,23 @@ const PostProcedureForm: React.FC<PostProcedureFormProps> = ({
         </Layer>
         <Layer>
           <FormLabel className={styles.formLabel}>
-            {t("procedureReport", "Procedure report")}
+            {t("medicalSupplyReport", "Medical supply report")}
           </FormLabel>
           <Controller
             control={control}
-            name="procedureReport"
+            name="medicalSupplyReport"
             render={({ field: { onChange } }) => (
               <TextArea
-                id="procedureReport"
-                labelText={t("procedureReport", "Procedure report")}
+                id="medicalSupplyReport"
+                labelText={t("medicalSupplyReport", "Medical supply report")}
                 rows={4}
                 onChange={onChange}
                 placeholder={t(
-                  "procedureReportPlaceholder",
-                  "Enter procedure report"
+                  "medicalSupplyReportPlaceholder",
+                  "Enter medical supply report"
                 )}
-                invalid={!!errors.procedureReport}
-                invalidText={errors.procedureReport?.message}
+                invalid={!!errors.medicalSupplyReport}
+                invalidText={errors.medicalSupplyReport?.message}
               />
             )}
           />
@@ -464,7 +451,7 @@ const PostProcedureForm: React.FC<PostProcedureFormProps> = ({
         </Layer>
       </Stack>
       <ButtonSet className={styles.buttonSetContainer}>
-        <Button onClick={() => closeWorkspace('post-procedure-form-workspace')} size="lg" kind="secondary">
+        <Button onClick={() => closeWorkspace('post-medical-supply-form-workspace')} size="lg" kind="secondary">
           {t("discard", "Discard")}
         </Button>
         <Button type="submit" size="lg" kind="primary">
@@ -475,4 +462,4 @@ const PostProcedureForm: React.FC<PostProcedureFormProps> = ({
   );
 };
 
-export default PostProcedureForm;
+export default PostMedicalSupplyForm;

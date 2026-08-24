@@ -6,16 +6,16 @@ import { type Order } from '@openmrs/esm-framework';
 import { type Config } from '../config-schema';
 import styles from './actions.scss';
 
-interface AddProcedureRequestResultsActionProps {
+interface AddMedicalSupplyRequestResultsActionProps {
   order: Order;
 }
 
-const AddProcedureRequestResultsAction: React.FC<AddProcedureRequestResultsActionProps> = ({ order }) => {
+const AddMedicalSupplyRequestResultsAction: React.FC<AddMedicalSupplyRequestResultsActionProps> = ({ order }) => {
   const { t } = useTranslation();
-  const { procedureOrderTypeUuid } = useConfig<Config>();
+  const { medicalSupplyOrderTypeUuid } = useConfig<Config>();
 
   const launchTestResultsWorkspace = () => {
-    launchWorkspace('post-procedure-form-workspace', {
+    launchWorkspace('post-medical-supply-form-workspace', {
       patient: order.patient,
       order
     });
@@ -26,13 +26,13 @@ const AddProcedureRequestResultsAction: React.FC<AddProcedureRequestResultsActio
       className={styles.actionButton}
       kind="primary"
       renderIcon={() => <AddIcon className={styles.actionButtonIcon} />}
-      iconDescription={t('addProcedureResult', 'Add procedure results')}
+      iconDescription={t('addMedicalSupplyResult', 'Add medical supply results')}
       onClick={launchTestResultsWorkspace}
       size="sm"
     >
-      {t('addProcedureResult', 'Add procedure results')}
+      {t('addMedicalSupplyResult', 'Add medical supply results')}
     </Button>
   );
 };
 
-export default AddProcedureRequestResultsAction;
+export default AddMedicalSupplyRequestResultsAction;

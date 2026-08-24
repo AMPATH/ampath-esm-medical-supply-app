@@ -88,7 +88,7 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
   }
 
   return (
-    <ExtensionSlot state={{ order: order, billStatus: status, isLoading, mutated }} name="procedures-ordered-actions-slot" />
+    <ExtensionSlot state={{ order: order, billStatus: status, isLoading, mutated }} name="medical-supply-ordered-actions-slot" />
   );
 };
 

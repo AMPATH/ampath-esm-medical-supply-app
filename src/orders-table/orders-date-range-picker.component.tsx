@@ -9,7 +9,7 @@ export const OrdersDateRangePicker = () => {
   const { t } = useTranslation();
   const currentDate = new Date();
 
-  const { dateRange, setDateRange } = useAppContext<DateFilterContext>('procedures-date-filter') ?? {
+  const { dateRange, setDateRange } = useAppContext<DateFilterContext>('medical-supply-date-filter') ?? {
     dateRange: [dayjs().startOf('day').toDate(), new Date()],
     setDateRange: () => {},
   };

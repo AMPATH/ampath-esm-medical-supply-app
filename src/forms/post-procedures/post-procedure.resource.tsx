@@ -26,10 +26,10 @@ export const useProviders = () => {
   };
 };
 
-export const savePostProcedure = async (postProcedure: object) => {
-  const response = await openmrsFetch(`${restBaseUrl}/procedure`, {
+export const savePostMedicalSupply = async (postMedicalSupply: object) => {
+  const response = await openmrsFetch(`${restBaseUrl}/medical-supply`, {
     method: "POST",
-    body: JSON.stringify(postProcedure),
+    body: JSON.stringify(postMedicalSupply),
     headers: {
       "Content-Type": "application/json",
     },
