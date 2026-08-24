@@ -8,7 +8,7 @@ export const configSchema = {
   },
   medicalSupplyServiceTypedUuid: {
     _type: Type.UUID,
-    _default: '3adeq9de-5545-4272-add4-a661005f781e',
+    _default: '1d11e8f7-2bd0-44b7-973a-a46a86cde97d',
     _description: 'Medical supply billable service type',
   },
   enableOdooBilling: {
