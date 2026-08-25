@@ -58,15 +58,16 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
         <div key={order.orderNumber} className={styles.orderDetailsContainer}>
           <StructuredListWrapper className={styles.orderDetailsWrapper}>
             <StructuredListBody>
-              <OrderDetailRow
+              {/* <OrderDetailRow
                 label={t('urgencyStatus', 'Urgency:')}
                 value={
                   <div className={styles.priorityPill} data-urgency={order.urgency?.replace('_', ' ')}>
                     {capitalize(order.urgency?.replace(/_/g, ' '))}
                   </div>
                 }
-              />
-              <OrderDetailRow label={t('testOrdered', 'Test ordered:')} value={order.display} />
+              /> */}
+              <OrderDetailRow label={t('order', 'Order:')} value={order.display} />
+              <OrderDetailRow label={t('quantity', 'Quantity:')} value={`${order?.quantity} (${order?.quantityUnits?.name?.display})`} />
               <OrderDetailRow
                 label={t('orderStatus', 'Status:')}
                 value={
@@ -94,28 +95,11 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
               )}
             </StructuredListBody>
           </StructuredListWrapper>
-          {(order.fulfillerStatus === 'COMPLETED' || order.fulfillerStatus === 'DRAFT') && (
-            <Accordion>
-              <AccordionItem
-                open={order.fulfillerStatus === 'COMPLETED'}
-                title={<span className={styles.accordionTitle}>{t('viewTestResults', 'View test results')}</span>}
-              >
-                <div className={styles.viewResults}>
-                  <ExtensionSlot
-                    className={styles.labResultSlot}
-                    state={{ order: order }}
-                    name="completed-lab-order-results-slot"
-                  />
-                </div>
-              </AccordionItem>
-            </Accordion>
-          )}
 
           <div className={styles.buttonSection}>
             {order.fulfillerStatus === 'RECEIVED' || order.fulfillerStatus == null ? (
               <>
                 <div className={styles.testsOrderedActions}>
-                  <ExtensionSlot state={{ order: order }} name="rejected-ordered-medical-supply-actions-slot" />
                   <OrderedActionsExtensionSlot order={order} bills={bills} isLoading={isLoading} preauthRequests={preauthRequests} isLoadingPreauthRequests={isLoadingPreauthRequests} />
                   <ExtensionSlot state={{ order: order }} name="add-lab-order-details-slot" />
                 </div>
@@ -153,4 +137,5 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
   );
 };
 
+export { OrderDetailRow }
 export default ListOrderDetails;

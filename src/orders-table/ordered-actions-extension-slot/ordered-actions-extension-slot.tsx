@@ -5,6 +5,7 @@ import { useInvalidateBills, useInvalidateOrderBill, useOdooBills, useOrderBill 
 import { type Config } from '../../config-schema';
 import { InlineLoading } from '@carbon/react';
 import { PreauthRequest } from '../../bill/bill.types';
+import styles from './ordered-actions-extension-slot.scss';
 
 interface OrderedActionsExtensionSlotProps {
   order: Order;
@@ -29,42 +30,13 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
 
   useEffect(() => {
     if (!enableOdooBilling) {
-      if (!isLoading && !isLoadingOrderBill && !isLoadingPreauthRequests && orderBill && bills) {
+      if (!isLoading && !isLoadingOrderBill && orderBill && bills) {
         const billUuid = orderBill?.bill_uuid;
         const lineItemUuid = orderBill?.line_item_uuid;
         const bill = bills.find((b) => b.uuid === billUuid);
         const lineItem = bill?.lineItems?.find((i) => i.uuid === lineItemUuid);
         if (lineItem) {
-          if (!blockedPaymentModes.includes(lineItem.priceName.toUpperCase())) {
-            if (!orderBill.consent_token) {
-              setStatus("AWAITING CLAIM VISIT");
-              return;
-            }
-            if (orderBill.requires_preauth) {
-              if (preauthRequests && preauthRequests.length) {
-                const intervention = preauthRequests.find(r => r.interventionCode === orderBill.intervention_code);
-                if (intervention) {
-                  if (intervention.status?.trim()?.toUpperCase() === "ACTIVE") {
-                    setStatus("PENDING PREAUTHORIZATION");
-                  }
-                  if (intervention.status?.trim()?.toUpperCase() === "FINALISED") {
-                    setStatus("PAID");
-                  }
-                  if(intervention.status?.trim()?.toUpperCase() === 'REJECTED') {
-                    setStatus('PREAUTHORIZATION REJECTED');
-                  }
-                } else {
-                  setStatus("NEEDS PREAUTHORIZATION");
-                }
-              } else {
-                setStatus("NEEDS PREAUTHORIZATION");
-              }
-            } else {
-              setStatus('PAID');
-            }
-          } else {
-            setStatus(lineItem?.status as BillStatus);
-          }
+          setStatus('PAID');
         } else {
           setStatus('BLANK');
         }
@@ -73,22 +45,24 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
       if (odooBills && odooBills.orders && odooBills.orders[0].order_lines && odooBills.orders[0].order_lines.length) {
         const currentOrder = odooBills.orders[0].order_lines.find((o) => o.openmrs_order_id === order?.uuid);
         if (currentOrder) {
-          if (currentOrder.billing_status.toUpperCase() === 'PAID') {
-            setStatus('PAID');
-          } else {
-            setStatus('PENDING');
-          }
+          setStatus('PAID');
+        } else {
+          setStatus('PENDING');
         }
       }
     }
-  }, [order, isLoading, bills, odooBills, orderBill, isLoadingOrderBill, blockedPaymentModes, enableOdooBilling, preauthRequests, isLoadingPreauthRequests]);
+  }, [order, isLoading, bills, odooBills, orderBill, isLoadingOrderBill, blockedPaymentModes, enableOdooBilling]);
 
   if (isLoadingOdooBills || isLoading || isLoadingOrderBill) {
-    return <InlineLoading />
+    return <InlineLoading />;
   }
 
   return (
-    <ExtensionSlot state={{ order: order, billStatus: status, isLoading, mutated }} name="medical-supply-ordered-actions-slot" />
+    <ExtensionSlot
+      className={styles.orderedActionsSlot}
+      state={{ order: order, billStatus: status, isLoading, mutated }}
+      name="medical-supply-ordered-actions-slot"
+    />
   );
 };
 

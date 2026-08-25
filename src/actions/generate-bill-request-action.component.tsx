@@ -13,7 +13,7 @@ interface GenerateBillRequestActionMenuProps {
 
 const GenerateBillRequestAction: React.FC<GenerateBillRequestActionMenuProps> = ({
   order,
-  billStatus = 'BLANK',
+  billStatus,
   isLoading,
   mutated,
 }) => {
@@ -24,7 +24,7 @@ const GenerateBillRequestAction: React.FC<GenerateBillRequestActionMenuProps> = 
     launchWorkspace('create-order-bill-form-workspace', {
       workspaceTitle: t('createOrderBill', 'Create order bill form'),
       order,
-      quantity: 1,
+      quantity: Number(order?.quantity),
       serviceTypeUuid: medicalSupplyServiceTypedUuid,
       servicePointName: "MEDICAL SUPPLY",
       mutated,

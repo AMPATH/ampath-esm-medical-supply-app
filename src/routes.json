@@ -15,7 +15,9 @@
       "name": "medical-supply-dashboard-link",
       "component": "medicalSupplyDashboardLink",
       "slot": "homepage-dashboard-slot",
-      "privileges": ["O3 View Medical Supply Dashboard"],
+      "privileges": [
+        "O3 View Medical Supply Dashboard"
+      ],
       "meta": {
         "name": "medical-supply",
         "slot": "medical-supply-dashboard-slot",
@@ -28,7 +30,9 @@
       "component": "root",
       "name": "medical-supply",
       "slot": "medical-supply-dashboard-slot",
-      "privileges": ["O3 View Medical supply Dashboard"]
+      "privileges": [
+        "O3 View Medical supply Dashboard"
+      ]
     },
     {
       "name": "pickup-medical-supply-request-modal",
@@ -39,19 +43,22 @@
       "component": "rejectMedicalSupplyRequestModal"
     },
     {
-      "name": "pick-medical-supply-request-action",
-      "component": "pickupMedicalSupplyRequestAction",
-      "slot": "medical-supply-ordered-actions-slot"
+      "name": "dispense-medical-supply-request-action",
+      "component": "dispenseMedicalSupplyRequestAction",
+      "slot": "medical-supply-ordered-actions-slot",
+      "order": "2"
     },
     {
       "name": "generate-medical-supply-bill-request-action",
       "component": "generateBillRequestAction",
-      "slot": "medical-supply-ordered-actions-slot"
+      "slot": "medical-supply-ordered-actions-slot",
+       "order": "1"
     },
     {
       "name": "reject-medical-supply-request-action",
       "component": "rejectMedicalSupplyRequestAction",
-      "slot": "rejected-ordered-medical-supply-actions-slot"
+      "slot": "medical-supply-ordered-actions-slot",
+       "order": "0"
     },
     {
       "name": "add-medical-supply-request-results-action",
@@ -69,20 +76,10 @@
       }
     },
     {
-      "name": "inprogress-medical-supply-requests-table",
-      "slot": "medical-supply-panels-slot",
-      "component": "inprogressRequestsTable",
-      "order": 1,
-      "meta": {
-        "name": "inprogressMedicalSupplyPanel",
-        "title": "In progress"
-      }
-    },
-    {
       "name": "completed-medical-supply-requests-table",
       "slot": "medical-supply-panels-slot",
       "component": "completedRequestsTable",
-      "order": 2,
+      "order": 1,
       "meta": {
         "name": "completedMedicalSupplyPanel",
         "title": "Completed"
@@ -109,20 +106,10 @@
       }
     },
     {
-      "name": "inprogress-medical-supply-requests-tile",
-      "slot": "medical-supply-tiles-slot",
-      "component": "inProgressRequestsTile",
-      "order": 1,
-      "meta": {
-        "name": "inprogressRequestsTile",
-        "title": "In progress"
-      }
-    },
-    {
       "name": "completed-medical-supply-requests-tile",
       "slot": "medical-supply-tiles-slot",
       "component": "completedRequestsTile",
-      "order": 2,
+      "order": 1,
       "meta": {
         "name": "completedRequestsTile",
         "title": "Completed"
@@ -132,11 +119,17 @@
       "name": "declined-medical-supply-requests-tile",
       "slot": "medical-supply-tiles-slot",
       "component": "declinedRequestsTile",
-      "order": 3,
+      "order": 2,
       "meta": {
         "name": "declinedRequestsTile",
         "title": "Declined medical supplies"
       }
+    }
+  ],
+  "modals": [
+    {
+      "name": "dispense-medical-supply-request-modal",
+      "component": "dispenseMedicalSupplyRequestModal"
     }
   ],
   "workspaces": [

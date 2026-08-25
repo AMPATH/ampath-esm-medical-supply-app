@@ -13,7 +13,7 @@ export function useMedicalSupplyOrders(status: string) {
   const { sessionLocation } = useSession();
 
   const { medicalSupplyOrderTypeUuid } = useConfig<Config>();
-  const customRepresentation = `custom:(uuid,orderNumber,patient:(uuid,display,person:(uuid,display,age,birthdate,gender,attributes),identifiers),concept:(uuid,display),action,careSetting:(uuid,display,description,careSettingType,display),previousOrder,dateActivated,scheduledDate,dateStopped,autoExpireDate,encounter:(uuid,display,location:(uuid)),orderer:(uuid,display),orderReason,orderReasonNonCoded,orderType:(uuid,display,name,description,conceptClasses,parent),urgency,instructions,commentToFulfiller,display,fulfillerStatus,fulfillerComment,accessionNumber)`;
+  const customRepresentation = `custom:(uuid,orderNumber,patient:(uuid,display,person:(uuid,display,age,birthdate,gender,attributes),identifiers),concept:(uuid,display),action,careSetting:(uuid,display,description,careSettingType,display),previousOrder,dateActivated,scheduledDate,dateStopped,autoExpireDate,encounter:(uuid,display,location:(uuid)),orderer:(uuid,display),orderReason,orderReasonNonCoded,orderType:(uuid,display,name,description,conceptClasses,parent),urgency,instructions,commentToFulfiller,display,fulfillerStatus,fulfillerComment,accessionNumber,quantity,quantityUnits:(uuid,display,name:(uuid,display)))`;
   let url = `${restBaseUrl}/order?orderTypes=${medicalSupplyOrderTypeUuid}&v=${customRepresentation}`;
   url = `${url}&fulfillerStatus=${status}`;
   url = `${url}&excludeCanceledAndExpired=true&excludeDiscontinueOrders=true`;

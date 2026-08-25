@@ -3,12 +3,14 @@ import { Button } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import { showModal, type Order } from '@openmrs/esm-framework';
 import styles from './actions.scss';
+import { BillStatus } from '../types';
 
 interface RejectMedicalSupplyRequestActionProps {
   order: Order;
+  billStatus: BillStatus;
 }
 
-const RejectMedicalSupplyRequestAction: React.FC<RejectMedicalSupplyRequestActionProps> = ({ order }) => {
+const RejectMedicalSupplyRequestAction: React.FC<RejectMedicalSupplyRequestActionProps> = ({ order, billStatus }) => {
   const { t } = useTranslation();
   const unsupportedStatuses = ['COMPLETED', 'DECLINED'];
 
@@ -18,6 +20,10 @@ const RejectMedicalSupplyRequestAction: React.FC<RejectMedicalSupplyRequestActio
       order,
     });
   }, [order]);
+
+  if (billStatus !== 'BLANK') {
+    return;
+  }
 
   return (
     <Button
