@@ -35,34 +35,20 @@
       ]
     },
     {
-      "name": "pickup-medical-supply-request-modal",
-      "component": "pickupMedicalSupplyRequestModal"
-    },
-    {
-      "name": "reject-medical-supply-request-modal",
-      "component": "rejectMedicalSupplyRequestModal"
-    },
-    {
-      "name": "dispense-medical-supply-request-action",
-      "component": "dispenseMedicalSupplyRequestAction",
-      "slot": "medical-supply-ordered-actions-slot",
-      "order": "2"
-    },
-    {
-      "name": "generate-medical-supply-bill-request-action",
-      "component": "generateBillRequestAction",
-      "slot": "medical-supply-ordered-actions-slot",
-       "order": "1"
-    },
-    {
       "name": "reject-medical-supply-request-action",
       "component": "rejectMedicalSupplyRequestAction",
       "slot": "medical-supply-ordered-actions-slot",
-       "order": "0"
+      "order": 0
     },
     {
-      "name": "add-medical-supply-request-results-action",
-      "component": "addMedicalSupplyRequestResultsAction",
+      "name": "pickup-medical-supply-request-action",
+      "component": "pickupMedicalSupplyRequestAction",
+      "slot": "medical-supply-ordered-actions-slot",
+      "order": 1
+    },
+    {
+      "name": "dispense-medical-supply-actions",
+      "component": "dispenseMedicalSupplyActions",
       "slot": "inprogress-medical-supply-tests-actions-slot"
     },
     {
@@ -76,10 +62,20 @@
       }
     },
     {
+      "name": "in-progress-medical-supply-requests-table",
+      "slot": "medical-supply-panels-slot",
+      "component": "inProgressRequestsTable",
+      "order": 1,
+      "meta": {
+        "name": "inProgressMedicalSupplyPanel",
+        "title": "In progress"
+      }
+    },
+    {
       "name": "completed-medical-supply-requests-table",
       "slot": "medical-supply-panels-slot",
       "component": "completedRequestsTable",
-      "order": 1,
+      "order": 2,
       "meta": {
         "name": "completedMedicalSupplyPanel",
         "title": "Completed"
@@ -106,10 +102,20 @@
       }
     },
     {
+      "name": "in-progress-medical-supply-requests-tile",
+      "slot": "medical-supply-tiles-slot",
+      "component": "inProgressRequestsTile",
+      "order": 1,
+      "meta": {
+        "name": "inProgressRequestsTile",
+        "title": "Medical supplies in progress"
+      }
+    },
+    {
       "name": "completed-medical-supply-requests-tile",
       "slot": "medical-supply-tiles-slot",
       "component": "completedRequestsTile",
-      "order": 1,
+      "order": 2,
       "meta": {
         "name": "completedRequestsTile",
         "title": "Completed"
@@ -119,7 +125,7 @@
       "name": "declined-medical-supply-requests-tile",
       "slot": "medical-supply-tiles-slot",
       "component": "declinedRequestsTile",
-      "order": 2,
+      "order": 3,
       "meta": {
         "name": "declinedRequestsTile",
         "title": "Declined medical supplies"
@@ -130,14 +136,14 @@
     {
       "name": "dispense-medical-supply-request-modal",
       "component": "dispenseMedicalSupplyRequestModal"
-    }
-  ],
-  "workspaces": [
+    },
     {
-      "name": "post-medical-supply-form-workspace",
-      "component": "postMedicalSupplyForm",
-      "title": "Medical supply results",
-      "type": "other-form"
+      "name": "pickup-medical-supply-request-modal",
+      "component": "pickupMedicalSupplyRequestModal"
+    },
+    {
+      "name": "reject-medical-supply-request-modal",
+      "component": "rejectMedicalSupplyRequestModal"
     }
   ]
 }

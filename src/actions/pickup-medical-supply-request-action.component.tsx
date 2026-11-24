@@ -3,14 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@carbon/react';
 import { showModal, type Order } from '@openmrs/esm-framework';
 import styles from './actions.scss';
-import { type BillStatus } from '../types';
 
 interface PickMedicalSupplyRequestActionMenuProps {
   order: Order;
-  billStatus: BillStatus;
 }
 
-const PickupMedicalSupplyRequestAction: React.FC<PickMedicalSupplyRequestActionMenuProps> = ({ order, billStatus }) => {
+const PickupMedicalSupplyRequestAction: React.FC<PickMedicalSupplyRequestActionMenuProps> = ({ order }) => {
   const { t } = useTranslation();
   const unsupportedStatuses = ['COMPLETED', 'DECLINED', 'IN_PROGRESS', 'ON_HOLD'];
 
@@ -21,7 +19,8 @@ const PickupMedicalSupplyRequestAction: React.FC<PickMedicalSupplyRequestActionM
     });
   }, [order]);
 
-  return billStatus === 'PAID' || billStatus === 'POSTED' ? (
+  // Billing happens at dispense time for the quantity dispensed, so picking up no longer waits for a bill.
+  return (
     <Button
       className={styles.actionButton}
       disabled={unsupportedStatuses.includes(order.fulfillerStatus)}
@@ -32,7 +31,7 @@ const PickupMedicalSupplyRequestAction: React.FC<PickMedicalSupplyRequestActionM
     >
       {t('pickMedicalSupplyRequest', 'Pick medical supply request')}
     </Button>
-  ) : null;
+  );
 };
 
 export default PickupMedicalSupplyRequestAction;

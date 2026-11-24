@@ -31,8 +31,9 @@ export const pickupMedicalSupplyRequestAction = getAsyncLifecycle(
   options,
 );
 
-export const dispenseMedicalSupplyRequestAction = getAsyncLifecycle(
-  () => import('./actions/dispense-medical-supply-request-action.component'),
+
+export const dispenseMedicalSupplyActions = getAsyncLifecycle(
+  () => import('./actions/dispense-medical-supply-actions.component'),
   options,
 );
 
@@ -41,10 +42,6 @@ export const rejectMedicalSupplyRequestAction = getAsyncLifecycle(
   options,
 );
 
-export const generateBillRequestAction = getAsyncLifecycle(
-  () => import('./actions/generate-bill-request-action.component'),
-  options,
-);
 
 // Modals
 export const pickupMedicalSupplyRequestModal = getAsyncLifecycle(
@@ -62,15 +59,14 @@ export const rejectMedicalSupplyRequestModal = getAsyncLifecycle(
   options,
 );
 
-// Workspaces
-export const postMedicalSupplyForm = getAsyncLifecycle(
-  () => import('./forms/post-medical-supply/post-medical-supply-form.component'),
-  options,
-);
-
 // Tables
 export const orderedRequestsTable = getAsyncLifecycle(
   () => import('./data-table-extensions/ordered-requests-table.extension'),
+  options,
+);
+
+export const inProgressRequestsTable = getAsyncLifecycle(
+  () => import('./data-table-extensions/in-progress-requests-table.extension'),
   options,
 );
 
@@ -87,6 +83,11 @@ export const declinedRequestsTable = getAsyncLifecycle(
 // Tiles
 export const declinedRequestsTile = getAsyncLifecycle(
   () => import('./summary/tiles/declined-requests-tile.component'),
+  options,
+);
+
+export const inProgressRequestsTile = getAsyncLifecycle(
+  () => import('./summary/tiles/in-progress-requests-tile.component'),
   options,
 );
 

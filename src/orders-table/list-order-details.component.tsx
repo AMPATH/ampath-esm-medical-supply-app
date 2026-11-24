@@ -14,6 +14,8 @@ import { ExtensionSlot, formatDate, parseDate, useVisit } from '@openmrs/esm-fra
 import { type GroupedOrders } from '../types';
 import styles from './list-order-details.scss';
 import { useBills, usePreauthPreview } from '../bill/bill.resource';
+import { useOrderDispenses } from '../resources/commodity-dispense.resource';
+import { type Order } from '../types';
 import OrderedActionsExtensionSlot from './ordered-actions-extension-slot/ordered-actions-extension-slot';
 
 type OrderDetailsRowProps = {
@@ -38,6 +40,28 @@ const OrderDetailRow = ({ label, value }: OrderDetailsRowProps) => {
     </StructuredListRow>
   );
 };
+/** How much of the order was handed over, from its commodity dispenses. Hidden for orders without any. */
+const DispensedQuantityRow: React.FC<{ order: Order }> = ({ order }) => {
+  const { t } = useTranslation();
+  const { dispenses } = useOrderDispenses(order.uuid);
+  if (!dispenses.length) {
+    return null;
+  }
+  const dispensed = dispenses
+    .filter((dispense) => dispense.status === 'COMPLETED')
+    .reduce((total, dispense) => total + Number(dispense.quantity ?? 0), 0);
+  return (
+    <OrderDetailRow
+      label={t('dispensedQuantity', 'Dispensed:')}
+      value={t('dispensedOfOrdered', '{{dispensed}} of {{ordered}} {{units}}', {
+        dispensed,
+        ordered: order.quantity,
+        units: order.quantityUnits?.display ?? '',
+      })}
+    />
+  );
+};
+
 const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, patientUuid }) => {
   const { t } = useTranslation();
   const originalOrders = groupedOrders?.originalOrders ?? [];
@@ -90,6 +114,9 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
                 value={order.instructions ?? t('NoInstructionLeft', 'No instructions are provided.')}
               />
 
+              {(order.fulfillerStatus === 'COMPLETED' || order.fulfillerStatus === 'DECLINED') && (
+                <DispensedQuantityRow order={order} />
+              )}
               {order.fulfillerStatus === 'DECLINED' && (
                 <OrderDetailRow label={t('reasonForDecline', 'Reason for decline:')} value={order.fulfillerComment} />
               )}
@@ -109,7 +136,7 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
                 <div className={styles.testsOrderedActions}>
                   <ExtensionSlot
                     className={styles.menuLink}
-                    state={{ order: order }}
+                    state={{ order, bills, isLoading, preauthRequests, isLoadingPreauthRequests }}
                     name="inprogress-medical-supply-tests-actions-slot"
                   />
                 </div>

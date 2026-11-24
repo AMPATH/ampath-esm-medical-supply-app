@@ -1,76 +1,144 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, InlineNotification, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
-import { formatDate, parseDate, showNotification, showSnackbar, useAbortController, type Order } from '@openmrs/esm-framework';
-import { setFulfillerStatus, useInvalidateMedicalSupplyOrders } from '../resources/medical-supply.resources';
+import { Button, InlineNotification, ModalBody, ModalFooter, ModalHeader, NumberInput } from '@carbon/react';
+import { formatDate, parseDate, showSnackbar, useConfig, useSession } from '@openmrs/esm-framework';
+import { type Config } from '../config-schema';
 import { OrderDetailRow } from '../orders-table/list-order-details.component';
+import {
+  createDispense,
+  dispenseErrorMessage,
+  useInvalidateOrderDispenses,
+} from '../resources/commodity-dispense.resource';
+import { type Order } from '../types';
 
-interface DispenseMedicalSupplyRequestModal {
+interface DispenseMedicalSupplyRequestModalProps {
   closeModal: () => void;
   order: Order;
+  /** Quantity on a bill line already linked to the order; the dispense must match it. */
+  billedQuantity?: number;
+  /** Opens the bill form for the dispensed quantity when the order has no bill yet. */
+  launchBillWorkspace?: (quantity: number) => void;
 }
 
-const DispenseMedicalSupplyRequestModal: React.FC<DispenseMedicalSupplyRequestModal> = ({ order, closeModal }) => {
+/**
+ * Step one of dispensing: record how much will be dispensed. The dispense is saved as PENDING,
+ * which reserves the quantity; it is billed next and handed over once the bill is cleared.
+ */
+const DispenseMedicalSupplyRequestModal: React.FC<DispenseMedicalSupplyRequestModalProps> = ({
+  order,
+  closeModal,
+  billedQuantity,
+  launchBillWorkspace,
+}) => {
   const { t } = useTranslation();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const abortController = useAbortController();
-  const invalidateOrders = useInvalidateMedicalSupplyOrders();
+  const { undispensedReasonConceptUuid } = useConfig<Config>();
+  const { currentProvider, sessionLocation } = useSession();
+  const invalidateDispenses = useInvalidateOrderDispenses();
 
-  const handleDispense = () => {
+  const orderedQuantity = Number(order.quantity);
+  const unitsDisplay = order.quantityUnits?.display ?? '';
+  const quantityLocked = billedQuantity != null || !undispensedReasonConceptUuid;
+  const [quantity, setQuantity] = useState<number>(billedQuantity ?? orderedQuantity);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const quantityInvalid = !(quantity > 0) || quantity > orderedQuantity;
+  const missingProvider = !currentProvider?.uuid;
+
+  const handleDispense = async () => {
     setIsSubmitting(true);
-    setFulfillerStatus(order.uuid, 'COMPLETED', abortController).then(
-      () => {
-        invalidateOrders();
-        setIsSubmitting(false);
-        closeModal();
-        showSnackbar({
-          isLowContrast: true,
-          title: t('dispenseMedicalSupply', 'Display medical supply'),
-          kind: 'success',
-          subtitle: t('orderDispensedSuccessfully', 'You have successfully dispensed the order'),
-        });
-      },
-      (error) => {
-        setIsSubmitting(false);
-        showNotification({
-          title: t('errorDispensingOrder', 'Error dispensing order'),
-          kind: 'error',
-          critical: true,
-          description: error?.message,
-        });
-      },
-    );
+    setError('');
+    try {
+      await createDispense({
+        order: order.uuid,
+        status: 'PENDING',
+        quantity,
+        quantityUnits: order.quantityUnits?.uuid,
+        dispenser: currentProvider.uuid,
+        location: sessionLocation?.uuid,
+      });
+      invalidateDispenses();
+      closeModal();
+      showSnackbar({
+        isLowContrast: true,
+        kind: 'success',
+        title: t('dispenseStarted', 'Dispense started'),
+        subtitle: billedQuantity
+          ? t('dispenseReadyForHandOver', 'Hand over once the bill is cleared.')
+          : t('dispenseReadyForBilling', 'Generate the bill for the dispensed quantity.'),
+      });
+      if (billedQuantity == null) {
+        launchBillWorkspace?.(quantity);
+      }
+    } catch (e) {
+      setError(dispenseErrorMessage(e));
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div>
-      <ModalHeader closeModal={closeModal} title={t('medicalSupplyRequest', 'Medical supply request')} />
+      <ModalHeader closeModal={closeModal} title={t('dispenseMedicalSupply', 'Dispense medical supply')} />
       <ModalBody>
         <div>
           <OrderDetailRow label={t('order', 'Order:')} value={order.display} />
-          <OrderDetailRow label={t('quantity', 'Quantity:')} value={`${order?.quantity} (${order?.quantityUnits?.name?.display})`} />
+          <OrderDetailRow
+            label={t('orderedQuantity', 'Ordered quantity:')}
+            value={`${orderedQuantity} ${unitsDisplay}`}
+          />
           <OrderDetailRow label={t('orderNumbers', 'Order number:')} value={order.orderNumber} />
-          <OrderDetailRow
-            label={t('orderDate', 'Order date:')}
-            value={formatDate(parseDate(order.dateActivated))}
-          />
+          <OrderDetailRow label={t('orderDate', 'Order date:')} value={formatDate(parseDate(order.dateActivated))} />
           <OrderDetailRow label={t('orderedBy', 'Ordered By:')} value={order.orderer?.display} />
-          <OrderDetailRow
-            label={t('orderInstructions', 'Instructions:')}
-            value={order.instructions ?? t('NoInstructionLeft', 'No instructions are provided.')}
-          />
         </div>
-        <InlineNotification kind="info" hideCloseButton lowContrast subtitle={t(
-          'medicalSupplyDispenseConfirmation',
-          'Selecting Dispense will move the order to "COMPLETED". Do you wish to proceed?',
-        )} />
+        <NumberInput
+          id="dispense-quantity"
+          label={t('quantityToDispense', 'Quantity to dispense ({{units}})', { units: unitsDisplay })}
+          min={0}
+          max={orderedQuantity}
+          value={quantity}
+          disabled={quantityLocked}
+          invalid={quantityInvalid}
+          invalidText={t('quantityToDispenseInvalid', 'Enter a quantity between 1 and {{max}}', {
+            max: orderedQuantity,
+          })}
+          helperText={
+            billedQuantity != null
+              ? t('quantityMatchesBill', 'Matches the quantity already billed for this order.')
+              : quantityLocked
+                ? t('partialDispenseDisabled', 'Partial dispensing is not configured; the full quantity is dispensed.')
+                : quantity < orderedQuantity
+                  ? t('remainderWillBeDeclined', 'The remaining {{remainder}} will be declined on hand-over.', {
+                      remainder: orderedQuantity - quantity,
+                    })
+                  : undefined
+          }
+          onChange={(_event, { value }) => setQuantity(Number(value))}
+        />
+        {missingProvider && (
+          <InlineNotification
+            kind="error"
+            hideCloseButton
+            lowContrast
+            title={t('noProviderAccount', 'Your user account has no provider')}
+            subtitle={t('noProviderAccountHelp', 'A provider account is needed to record who dispensed.')}
+          />
+        )}
+        {error && (
+          <InlineNotification
+            kind="error"
+            hideCloseButton
+            lowContrast
+            title={t('errorDispensingOrder', 'Error dispensing order')}
+            subtitle={error}
+          />
+        )}
       </ModalBody>
       <ModalFooter>
         <Button kind="secondary" onClick={closeModal}>
           {t('discard', 'Discard')}
         </Button>
-        <Button type="submit" onClick={handleDispense} disabled={isSubmitting}>
-          {t('dispense', 'Dispense')}
+        <Button onClick={handleDispense} disabled={isSubmitting || quantityInvalid || missingProvider}>
+          {billedQuantity != null ? t('dispense', 'Dispense') : t('dispenseAndBill', 'Dispense and bill')}
         </Button>
       </ModalFooter>
     </div>

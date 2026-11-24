@@ -24,3 +24,10 @@
   font-size: type.type-scale(2);
   border: none;
 }
+
+.dispenseSummary {
+  display: flex;
+  align-items: center;
+  margin-right: layout.$spacing-04;
+  font-size: type.type-scale(2);
+}
