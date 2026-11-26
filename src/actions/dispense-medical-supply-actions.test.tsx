@@ -31,7 +31,18 @@ jest.mock('../resources/commodity-dispense.resource', () => ({
 }));
 
 jest.mock('../resources/medical-supply.resources', () => ({
-  useInvalidateMedicalSupplyOrders: () => jest.fn(),
+  useInvalidateCommodityOrders: () => jest.fn(),
+}));
+
+jest.mock('../commodity', () => ({
+  ...jest.requireActual('../commodity'),
+  useCommodity: () => ({
+    key: 'nutrition',
+    title: 'Nutrition',
+    orderTypeUuid: 'nutrition-type',
+    billableServiceTypeUuid: 'service-type',
+    servicePointName: 'NUTRITION',
+  }),
 }));
 
 jest.mock('../bill/order-bill-status', () => ({
@@ -79,7 +90,6 @@ function givenBill(status: string, extra: Record<string, unknown> = {}) {
 beforeEach(() => {
   jest.clearAllMocks();
   jest.mocked(useConfig).mockReturnValue({
-    medicalSupplyServiceTypedUuid: 'service-type',
     undispensedReasonConceptUuid: 'reason-concept',
   });
   jest.mocked(useSession).mockReturnValue({
@@ -107,7 +117,7 @@ describe('DispenseMedicalSupplyActions', () => {
     givenBill('BLANK');
     render(<DispenseMedicalSupplyActions order={order} />);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Reject medical supply request' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Reject' }));
 
     expect(showModal).toHaveBeenCalledWith('reject-medical-supply-request-modal', expect.objectContaining({ order }));
   });
@@ -117,7 +127,7 @@ describe('DispenseMedicalSupplyActions', () => {
     givenBill('PENDING');
     render(<DispenseMedicalSupplyActions order={order} />);
 
-    expect(screen.queryByRole('button', { name: 'Reject medical supply request' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Reject' })).not.toBeInTheDocument();
     expect(screen.getByText('This order has a bill. Void it in billing before rejecting the order.')).toBeInTheDocument();
   });
 
@@ -126,7 +136,7 @@ describe('DispenseMedicalSupplyActions', () => {
     givenBill('BLANK');
     render(<DispenseMedicalSupplyActions order={order} />);
 
-    expect(screen.queryByRole('button', { name: 'Reject medical supply request' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Reject' })).not.toBeInTheDocument();
   });
 
   it('passes the quantity of an existing bill line so the dispense matches it', async () => {
@@ -225,7 +235,7 @@ describe('DispenseMedicalSupplyActions', () => {
 
     expect(launchWorkspace2).toHaveBeenCalledWith(
       'create-order-bill-form-workspace',
-      expect.objectContaining({ order, quantity: 3, serviceTypeUuid: 'service-type' }),
+      expect.objectContaining({ order, quantity: 3, serviceTypeUuid: 'service-type', servicePointName: 'NUTRITION' }),
     );
   });
 

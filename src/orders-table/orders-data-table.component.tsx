@@ -26,7 +26,7 @@ import { ExtensionSlot, formatDate, parseDate, showModal, useConfig, usePaginati
 import { useTranslation } from 'react-i18next';
 import { type FulfillerStatus, type FlattenedOrder, type Order } from '../types';
 import { type Config } from '../config-schema';
-import { useMedicalSupplyOrders, useQueueEntries } from '../resources/medical-supply.resources';
+import { useCommodityOrders, useQueueEntries } from '../resources/medical-supply.resources';
 import { OrdersDateRangePicker } from './orders-date-range-picker.component';
 import ListOrderDetails from './list-order-details.component';
 import styles from './orders-data-table.scss';
@@ -92,7 +92,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
   const { queueEntries } = useQueueEntries();
   const { patientIdIdentifierTypeUuid, personAttributeTypeUuid } = useConfig<Config>();
 
-  const { orders, isLoading } = useMedicalSupplyOrders(
+  const { orders, isLoading } = useCommodityOrders(
     props.status
   );
 

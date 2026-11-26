@@ -3,17 +3,17 @@
 // import userEvent from '@testing-library/user-event';
 // import { useConfig, getDefaultsFromConfigSchema, type Order, type Patient } from '@openmrs/esm-framework';
 // import { configSchema, type Config } from '../config-schema';
-// import { useMedicalSupplyOrders } from '../resources/medical-supply.resources';
+// import { useCommodityOrders } from '../resources/medical-supply.resources';
 // import OrdersDataTable from './orders-data-table.component';
 
 // jest.mock('../../laboratory.resource', () => ({
-//   useMedicalSupplyOrders: jest.fn(),
+//   useCommodityOrders: jest.fn(),
 // }));
 
 // const mockUseConfig = jest.mocked(useConfig<Config>);
-// const mockUseLabOrders = jest.mocked(useMedicalSupplyOrders);
+// const mockUseLabOrders = jest.mocked(useCommodityOrders);
 
-// function mockUseLabOrdersImplementation(props: Parameters<typeof useMedicalSupplyOrders>[0]) {
+// function mockUseLabOrdersImplementation(props: Parameters<typeof useCommodityOrders>[0]) {
 //   const mockPatient1: Partial<Patient> = {
 //     uuid: 'patient-uuid-1',
 //     display: 'PAT-001 - Pete Seeger',

@@ -5,16 +5,18 @@ import { type Config } from "../config-schema";
 import { useCallback, useEffect, useState } from "react";
 import { type QueueEntryResult, type DateFilterContext } from "../types";
 import { getEtlBaseUrl } from "../utils/utils";
+import { DATE_FILTER_CONTEXT, useCommodity } from "../commodity";
 
-export function useMedicalSupplyOrders(status: string) {
-  const { dateRange } = useAppContext<DateFilterContext>('medical-supply-date-filter') ?? {
+/** Orders of the open dashboard's commodity with the given fulfiller status ('' = not picked up). */
+export function useCommodityOrders(status: string) {
+  const { dateRange } = useAppContext<DateFilterContext>(DATE_FILTER_CONTEXT) ?? {
     dateRange: [dayjs().startOf('day').toDate(), new Date()],
   };
   const { sessionLocation } = useSession();
 
-  const { medicalSupplyOrderTypeUuid } = useConfig<Config>();
+  const commodity = useCommodity();
   const customRepresentation = `custom:(uuid,orderNumber,patient:(uuid,display,person:(uuid,display,age,birthdate,gender,attributes),identifiers),concept:(uuid,display),action,careSetting:(uuid,display,description,careSettingType,display),previousOrder,dateActivated,scheduledDate,dateStopped,autoExpireDate,encounter:(uuid,display,location:(uuid)),orderer:(uuid,display),orderReason,orderReasonNonCoded,orderType:(uuid,display,name,description,conceptClasses,parent),urgency,instructions,commentToFulfiller,display,fulfillerStatus,fulfillerComment,accessionNumber,quantity,quantityUnits:(uuid,display,name:(uuid,display)))`;
-  let url = `${restBaseUrl}/order?orderTypes=${medicalSupplyOrderTypeUuid}&v=${customRepresentation}`;
+  let url = `${restBaseUrl}/order?orderTypes=${commodity?.orderTypeUuid}&v=${customRepresentation}`;
   url = `${url}&fulfillerStatus=${status}`;
   url = `${url}&excludeCanceledAndExpired=true&excludeDiscontinueOrders=true`;
   url = dateRange
@@ -25,7 +27,7 @@ export function useMedicalSupplyOrders(status: string) {
 
   const { data, error, isLoading, isValidating } = useSWR<{
     data: { results: Array<Order> };
-  }>(`${url}`, openmrsFetch);
+  }>(commodity ? url : null, openmrsFetch);
 
   let filteredOrders = data?.data?.results?.filter((order) => order.encounter?.location?.uuid === sessionLocation?.uuid);
 
@@ -99,14 +101,14 @@ export function rejectMedicalSupplyOrder(orderId: string, comment: string, abort
   });
 }
 
-export function useInvalidateMedicalSupplyOrders() {
-  const { medicalSupplyOrderTypeUuid } = useConfig<Config>();
+export function useInvalidateCommodityOrders() {
+  const orderTypeUuid = useCommodity()?.orderTypeUuid;
 
   return useCallback(() => {
     mutate(
-      (key) => typeof key === 'string' && key.startsWith(`${restBaseUrl}/order?orderTypes=${medicalSupplyOrderTypeUuid}`),
+      (key) => typeof key === 'string' && key.startsWith(`${restBaseUrl}/order?orderTypes=${orderTypeUuid}`),
       undefined,
       { revalidate: true },
     );
-  }, [medicalSupplyOrderTypeUuid]);
+  }, [orderTypeUuid]);
 }

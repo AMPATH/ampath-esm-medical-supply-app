@@ -5,6 +5,7 @@ import { Button, InlineLoading, Tag } from '@carbon/react';
 import { ExtensionSlot, launchWorkspace2, showModal, showSnackbar, useConfig, useSession } from '@openmrs/esm-framework';
 import { isBillCleared, useOrderBillStatus } from '../bill/order-bill-status';
 import type { OrderBillResponse, PreauthRequest } from '../bill/bill.types';
+import { useCommodity } from '../commodity';
 import { type Config } from '../config-schema';
 import {
   createDispense,
@@ -15,7 +16,7 @@ import {
   voidDispense,
   type CommodityDispense,
 } from '../resources/commodity-dispense.resource';
-import { useInvalidateMedicalSupplyOrders } from '../resources/medical-supply.resources';
+import { useInvalidateCommodityOrders } from '../resources/medical-supply.resources';
 import { type BillInvoice, type BillStatus, type Order } from '../types';
 import RejectMedicalSupplyRequestAction from './reject-medical-supply-request-action.component';
 import styles from './actions.scss';
@@ -43,11 +44,12 @@ const DispenseMedicalSupplyActions: React.FC<DispenseMedicalSupplyActionsProps> 
   isLoadingPreauthRequests = false,
 }) => {
   const { t } = useTranslation();
-  const { medicalSupplyServiceTypedUuid, undispensedReasonConceptUuid } = useConfig<Config>();
+  const { undispensedReasonConceptUuid } = useConfig<Config>();
+  const commodity = useCommodity();
   const { currentProvider, sessionLocation } = useSession();
   const { dispenses, isLoading: isLoadingDispenses } = useOrderDispenses(order.uuid);
   const invalidateDispenses = useInvalidateOrderDispenses();
-  const invalidateOrders = useInvalidateMedicalSupplyOrders();
+  const invalidateOrders = useInvalidateCommodityOrders();
   const {
     status: billStatus,
     lineItem,
@@ -65,12 +67,12 @@ const DispenseMedicalSupplyActions: React.FC<DispenseMedicalSupplyActionsProps> 
         workspaceTitle: t('createOrderBill', 'Create order bill form'),
         order,
         quantity,
-        serviceTypeUuid: medicalSupplyServiceTypedUuid,
-        servicePointName: 'MEDICAL SUPPLY',
+        serviceTypeUuid: commodity?.billableServiceTypeUuid,
+        servicePointName: commodity?.servicePointName,
         mutated,
       });
     },
-    [t, order, medicalSupplyServiceTypedUuid, mutated],
+    [t, order, commodity, mutated],
   );
 
   // The bill form does not return the line it creates; once the order's bill line appears, link it

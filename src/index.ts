@@ -24,6 +24,7 @@ export function startupApp() {
 export const root = getAsyncLifecycle(() => import('./root.component'), options);
 
 export const medicalSupplyDashboardLink = getSyncLifecycle(createDashboardLink({ name: 'medical-supply', title: 'Medical Supply' }), options);
+export const nutritionDashboardLink = getSyncLifecycle(createDashboardLink({ name: 'nutrition', title: 'Nutrition' }), options);
 
 // Actions
 export const pickupMedicalSupplyRequestAction = getAsyncLifecycle(
