@@ -6,6 +6,7 @@ import { Extension, useAssignedExtensions } from '@openmrs/esm-framework';
 // inside Carbon Tabs structure (TabList + TabPanels must be separate siblings).
 // eslint-disable-next-line no-restricted-imports
 import { ComponentContext } from '@openmrs/esm-framework/src/internal';
+import { useCommodity } from '../commodity';
 import { type Config } from '../config-schema';
 import styles from './medical-supply-tabs.scss';
 
@@ -13,6 +14,7 @@ const panelSlot = 'medical-supply-panels-slot';
 
 const MedicalSupplyOrdersTabs: React.FC = () => {
   const { t } = useTranslation();
+  const commodity = useCommodity();
   const [selectedTab, setSelectedTab] = useState(0);
   const tabExtensions = useAssignedExtensions(panelSlot);
 
@@ -39,6 +41,7 @@ const MedicalSupplyOrdersTabs: React.FC = () => {
                       {t(title, {
                         ns: extension.moduleName,
                         defaultValue: title,
+                        commodity: commodity?.title ?? '',
                       })}
                     </Tab>
                   );

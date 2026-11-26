@@ -1,15 +1,30 @@
 import { Type } from '@openmrs/esm-framework';
 
 export const configSchema = {
-  medicalSupplyOrderTypeUuid: {
-    _type: Type.UUID,
-    _default: "58ea528c-8f62-45f0-86a2-f7d1327b8c56",
-    _description: ""
-  },
-  medicalSupplyServiceTypedUuid: {
-    _type: Type.UUID,
-    _default: '1d11e8f7-2bd0-44b7-973a-a46a86cde97d',
-    _description: 'Medical supply billable service type',
+  commodities: {
+    _type: Type.Array,
+    _description:
+      'One entry per commodity dashboard. The key is the URL segment, /home/<key>, and must match a dashboard link this app registers: medical-supply or nutrition.',
+    _elements: {
+      _type: Type.Object,
+      key: { _type: Type.String, _description: 'URL segment of the dashboard, e.g. medical-supply or nutrition' },
+      title: { _type: Type.String, _description: 'Name shown in the dashboard title, tiles and dialogs' },
+      orderTypeUuid: { _type: Type.UUID, _description: 'Order type whose orders the dashboard lists' },
+      billableServiceTypeUuid: {
+        _type: Type.UUID,
+        _description: 'Billable service type offered when billing a dispense',
+      },
+      servicePointName: { _type: Type.String, _description: 'Service point name passed to the bill form' },
+    },
+    _default: [
+      {
+        key: 'medical-supply',
+        title: 'Medical supply',
+        orderTypeUuid: '58ea528c-8f62-45f0-86a2-f7d1327b8c56',
+        billableServiceTypeUuid: '1d11e8f7-2bd0-44b7-973a-a46a86cde97d',
+        servicePointName: 'MEDICAL SUPPLY',
+      },
+    ],
   },
   undispensedReasonConceptUuid: {
     _type: Type.String,
@@ -44,9 +59,16 @@ export const configSchema = {
   },
 };
 
+export interface Commodity {
+  key: string;
+  title: string;
+  orderTypeUuid: string;
+  billableServiceTypeUuid: string;
+  servicePointName: string;
+}
+
 export type Config = {
-  medicalSupplyOrderTypeUuid: string;
-  medicalSupplyServiceTypedUuid: string;
+  commodities: Array<Commodity>;
   undispensedReasonConceptUuid: string;
   enableOdooBilling: boolean;
   blockedPaymentModes: Array<string>;

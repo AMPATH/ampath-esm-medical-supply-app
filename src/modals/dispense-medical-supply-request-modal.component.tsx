@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, InlineNotification, ModalBody, ModalFooter, ModalHeader, NumberInput } from '@carbon/react';
 import { formatDate, parseDate, showSnackbar, useConfig, useSession } from '@openmrs/esm-framework';
+import { commodityNoun, useCommodity } from '../commodity';
 import { type Config } from '../config-schema';
 import { OrderDetailRow } from '../orders-table/list-order-details.component';
 import {
@@ -34,6 +35,7 @@ const DispenseMedicalSupplyRequestModal: React.FC<DispenseMedicalSupplyRequestMo
   const { undispensedReasonConceptUuid } = useConfig<Config>();
   const { currentProvider, sessionLocation } = useSession();
   const invalidateDispenses = useInvalidateOrderDispenses();
+  const commodity = useCommodity();
 
   const orderedQuantity = Number(order.quantity);
   const unitsDisplay = order.quantityUnits?.display ?? '';
@@ -78,7 +80,7 @@ const DispenseMedicalSupplyRequestModal: React.FC<DispenseMedicalSupplyRequestMo
 
   return (
     <div>
-      <ModalHeader closeModal={closeModal} title={t('dispenseMedicalSupply', 'Dispense medical supply')} />
+      <ModalHeader closeModal={closeModal} title={t('dispenseCommodity', 'Dispense {{commodity}}', { commodity: commodityNoun(commodity) })} />
       <ModalBody>
         <div>
           <OrderDetailRow label={t('order', 'Order:')} value={order.display} />

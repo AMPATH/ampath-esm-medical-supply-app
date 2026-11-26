@@ -31,7 +31,30 @@
       "name": "medical-supply",
       "slot": "medical-supply-dashboard-slot",
       "privileges": [
-        "O3 View Medical supply Dashboard"
+        "O3 View Medical Supply Dashboard"
+      ]
+    },
+    {
+      "name": "nutrition-dashboard-link",
+      "component": "nutritionDashboardLink",
+      "slot": "homepage-dashboard-slot",
+      "privileges": [
+        "O3 View Nutrition Dashboard"
+      ],
+      "meta": {
+        "name": "nutrition",
+        "slot": "nutrition-dashboard-slot",
+        "title": "Nutrition"
+      },
+      "online": true,
+      "offline": true
+    },
+    {
+      "component": "root",
+      "name": "nutrition",
+      "slot": "nutrition-dashboard-slot",
+      "privileges": [
+        "O3 View Nutrition Dashboard"
       ]
     },
     {
@@ -58,7 +81,7 @@
       "component": "orderedRequestsTable",
       "meta": {
         "name": "orderedMedicalSupplyPanel",
-        "title": "Medical supplies ordered"
+        "title": "{{commodity}} ordered"
       }
     },
     {

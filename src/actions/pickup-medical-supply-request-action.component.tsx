@@ -29,7 +29,7 @@ const PickupMedicalSupplyRequestAction: React.FC<PickMedicalSupplyRequestActionM
       key={order.uuid}
       onClick={launchModal}
     >
-      {t('pickMedicalSupplyRequest', 'Pick medical supply request')}
+      {t('pickUpOrder', 'Pick up')}
     </Button>
   );
 };

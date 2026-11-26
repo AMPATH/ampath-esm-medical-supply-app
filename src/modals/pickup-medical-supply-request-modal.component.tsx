@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
 import { showNotification, showSnackbar, useAbortController, type Order } from '@openmrs/esm-framework';
-import { setFulfillerStatus, useInvalidateMedicalSupplyOrders } from '../resources/medical-supply.resources';
+import { setFulfillerStatus, useInvalidateCommodityOrders } from '../resources/medical-supply.resources';
+import { commodityNoun, useCommodity } from '../commodity';
 
 interface PickupMedicalSupplyRequestModal {
   closeModal: () => void;
@@ -13,7 +14,8 @@ const PickupMedicalSupplyRequestModal: React.FC<PickupMedicalSupplyRequestModal>
   const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const abortController = useAbortController();
-  const invalidateOrders = useInvalidateMedicalSupplyOrders();
+  const invalidateOrders = useInvalidateCommodityOrders();
+  const commodity = useCommodity();
 
   const handlePickup = () => {
     setIsSubmitting(true);
@@ -43,7 +45,7 @@ const PickupMedicalSupplyRequestModal: React.FC<PickupMedicalSupplyRequestModal>
 
   return (
     <div>
-      <ModalHeader closeModal={closeModal} title={t('medicalSupplyRequest', 'MedicalSupply request')} />
+      <ModalHeader closeModal={closeModal} title={t('pickUpCommodityOrder', 'Pick up {{commodity}} order', { commodity: commodityNoun(commodity) })} />
       <ModalBody>
         <p>
           {t(
@@ -57,7 +59,7 @@ const PickupMedicalSupplyRequestModal: React.FC<PickupMedicalSupplyRequestModal>
           {t('discard', 'Discard')}
         </Button>
         <Button type="submit" onClick={handlePickup} disabled={isSubmitting}>
-          {t('pickupMedicalSupplyRequest', 'Pick up medical supply request')}
+          {t('pickUpOrder', 'Pick up')}
         </Button>
       </ModalFooter>
     </div>
