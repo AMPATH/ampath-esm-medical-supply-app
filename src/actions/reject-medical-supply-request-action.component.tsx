@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { Button } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
-import { showModal, type Order } from '@openmrs/esm-framework';
+import { showModal } from '@openmrs/esm-framework';
 import styles from './actions.scss';
-import { BillStatus } from '../types';
+import type { BillStatus, Order } from '../types';
 
 interface RejectMedicalSupplyRequestActionProps {
   order: Order;

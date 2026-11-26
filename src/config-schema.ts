@@ -11,6 +11,12 @@ export const configSchema = {
     _default: '1d11e8f7-2bd0-44b7-973a-a46a86cde97d',
     _description: 'Medical supply billable service type',
   },
+  undispensedReasonConceptUuid: {
+    _type: Type.String,
+    _default: '',
+    _description:
+      'Concept recorded as the reason when the rest of a partly dispensed order is declined. Partial dispensing is only allowed when this is set; otherwise the full ordered quantity must be dispensed.',
+  },
   enableOdooBilling: {
     _type: Type.Boolean,
     _default: false,
@@ -41,6 +47,7 @@ export const configSchema = {
 export type Config = {
   medicalSupplyOrderTypeUuid: string;
   medicalSupplyServiceTypedUuid: string;
+  undispensedReasonConceptUuid: string;
   enableOdooBilling: boolean;
   blockedPaymentModes: Array<string>;
   serviceUuid: string;
