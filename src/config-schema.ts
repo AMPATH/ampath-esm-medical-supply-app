@@ -24,6 +24,13 @@ export const configSchema = {
         billableServiceTypeUuid: '1d11e8f7-2bd0-44b7-973a-a46a86cde97d',
         servicePointName: 'MEDICAL SUPPLY',
       },
+      {
+        key: 'nutrition',
+        title: 'Nutrition',
+        orderTypeUuid: 'a965e782-4aec-4d2a-bd29-4051dc132725',
+        billableServiceTypeUuid: '385aa16d-3af8-4fc8-b490-f861bc1da684',
+        servicePointName: 'NUTRITION',
+      },
     ],
   },
   undispensedReasonConceptUuid: {
