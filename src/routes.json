@@ -31,7 +31,7 @@
       "name": "medical-supply",
       "slot": "medical-supply-dashboard-slot",
       "privileges": [
-        "O3 View Medical supply Dashboard"
+        "O3 View Medical Supply Dashboard"
       ]
     },
     {
