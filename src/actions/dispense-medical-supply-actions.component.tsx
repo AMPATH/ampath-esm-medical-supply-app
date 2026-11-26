@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { type TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Button, InlineLoading } from '@carbon/react';
+import { Button, InlineLoading, Tag } from '@carbon/react';
 import { ExtensionSlot, launchWorkspace2, showModal, showSnackbar, useConfig, useSession } from '@openmrs/esm-framework';
 import { isBillCleared, useOrderBillStatus } from '../bill/order-bill-status';
-import type { PreauthRequest } from '../bill/bill.types';
+import type { OrderBillResponse, PreauthRequest } from '../bill/bill.types';
 import { type Config } from '../config-schema';
 import {
   createDispense,
@@ -12,9 +13,10 @@ import {
   useInvalidateOrderDispenses,
   useOrderDispenses,
   voidDispense,
+  type CommodityDispense,
 } from '../resources/commodity-dispense.resource';
 import { useInvalidateMedicalSupplyOrders } from '../resources/medical-supply.resources';
-import { type BillInvoice, type Order } from '../types';
+import { type BillInvoice, type BillStatus, type Order } from '../types';
 import styles from './actions.scss';
 
 interface DispenseMedicalSupplyActionsProps {
@@ -169,43 +171,88 @@ const DispenseMedicalSupplyActions: React.FC<DispenseMedicalSupplyActionsProps> 
 
   if (!pending) {
     return (
-      <Button className={styles.actionButton} size="sm" kind="primary" onClick={openDispenseModal}>
-        {t('dispense', 'Dispense')}
-      </Button>
+      <div className={styles.dispensePanel}>
+        <div className={styles.dispenseButtons}>
+          <Button className={styles.actionButton} size="sm" kind="primary" onClick={openDispenseModal}>
+            {t('dispense', 'Dispense')}
+          </Button>
+        </div>
+      </div>
     );
   }
 
   const units = pending.quantityUnits?.display ?? order.quantityUnits?.display ?? '';
   const cleared = Boolean(pending.billReference) && isBillCleared(billStatus);
+  const hint = cleared ? t('readyToHandOver', 'Ready to hand over.') : handOverHint(t, billStatus, pending, orderBill);
 
   return (
-    <>
-      <span className={styles.dispenseSummary}>
-        {t('dispensingQuantity', 'Dispensing {{quantity}} {{units}}', { quantity: pending.quantity, units })}
-      </span>
-      <ExtensionSlot
-        name="generate-order-bill-button-slot"
-        state={{
-          order,
-          billStatus,
-          isLoading: isLoadingBill,
-          launchBillWorkspace: () => launchBillWorkspace(Number(pending.quantity)),
-        }}
-      />
-      <Button
-        className={styles.actionButton}
-        size="sm"
-        kind="primary"
-        disabled={!cleared || isSubmitting}
-        onClick={handOver}
-      >
-        {t('handOver', 'Hand over')}
-      </Button>
-      <Button className={styles.actionButton} size="sm" kind="ghost" disabled={isSubmitting} onClick={cancelDispense}>
-        {t('cancelDispense', 'Cancel dispense')}
-      </Button>
-    </>
+    <div className={styles.dispensePanel}>
+      <div className={styles.dispenseStatus}>
+        <Tag type={cleared ? 'green' : 'blue'} size="sm">
+          {t('awaitingHandOver', 'Awaiting hand-over')}
+        </Tag>
+        <span>
+          {t('dispensingQuantity', 'Dispensing {{quantity}} {{units}}', { quantity: pending.quantity, units })}
+        </span>
+      </div>
+      {hint && <p className={styles.dispenseHint}>{hint}</p>}
+      <div className={styles.dispenseButtons}>
+        <Button className={styles.actionButton} size="sm" kind="ghost" disabled={isSubmitting} onClick={cancelDispense}>
+          {t('cancelDispense', 'Cancel dispense')}
+        </Button>
+        <ExtensionSlot
+          className={styles.billStatusSlot}
+          name="generate-order-bill-button-slot"
+          state={{
+            order,
+            billStatus,
+            isLoading: isLoadingBill,
+            launchBillWorkspace: () => launchBillWorkspace(Number(pending.quantity)),
+          }}
+        />
+        <Button
+          className={styles.actionButton}
+          size="sm"
+          kind="primary"
+          disabled={!cleared || isSubmitting}
+          onClick={handOver}
+        >
+          {t('handOver', 'Hand over')}
+        </Button>
+      </div>
+    </div>
   );
 };
+
+/** Why hand-over is not available yet, for the bill state the dispense is in. */
+function handOverHint(
+  t: TFunction,
+  billStatus: BillStatus,
+  pending: CommodityDispense,
+  orderBill?: OrderBillResponse,
+): string | null {
+  if (!pending.billReference) {
+    return orderBill
+      ? t('linkingBill', 'Linking the bill to this dispense…')
+      : t('generateBillToContinue', 'Generate the bill for this quantity to continue.');
+  }
+  switch (billStatus) {
+    case 'PENDING':
+      return t('waitingForPayment', 'Waiting for the bill to be paid.');
+    case 'AWAITING CLAIM VISIT':
+      return t('waitingForClaimVisit', 'Waiting for the SHA claim visit before hand-over.');
+    case 'NEEDS PREAUTHORIZATION':
+      return t('preauthorizationNeeded', 'Pre-authorization is needed before hand-over.');
+    case 'PENDING PREAUTHORIZATION':
+      return t('waitingForPreauthorization', 'Waiting for pre-authorization.');
+    case 'PREAUTHORIZATION REJECTED':
+      return t(
+        'preauthorizationRejectedHint',
+        'Pre-authorization was rejected. Cancel the dispense or check with billing.',
+      );
+    default:
+      return null;
+  }
+}
 
 export default DispenseMedicalSupplyActions;

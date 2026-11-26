@@ -131,6 +131,26 @@ describe('DispenseMedicalSupplyActions', () => {
     expect(screen.getByRole('button', { name: 'Hand over' })).toBeEnabled();
   });
 
+  it('explains why hand-over is not available yet', () => {
+    givenDispenses([pending()]);
+    givenBill('BLANK');
+    const { rerender } = render(<DispenseMedicalSupplyActions order={order} />);
+    expect(screen.getByText('Generate the bill for this quantity to continue.')).toBeInTheDocument();
+
+    givenDispenses([pending({ billReference: 'line-1' })]);
+    givenBill('AWAITING CLAIM VISIT');
+    rerender(<DispenseMedicalSupplyActions order={order} />);
+    expect(screen.getByText('Waiting for the SHA claim visit before hand-over.')).toBeInTheDocument();
+
+    givenBill('PENDING');
+    rerender(<DispenseMedicalSupplyActions order={order} />);
+    expect(screen.getByText('Waiting for the bill to be paid.')).toBeInTheDocument();
+
+    givenBill('PAID');
+    rerender(<DispenseMedicalSupplyActions order={order} />);
+    expect(screen.getByText('Ready to hand over.')).toBeInTheDocument();
+  });
+
   it('links the order bill line to the pending dispense once the bill exists', async () => {
     givenDispenses([pending()]);
     givenBill('PENDING', { orderBill: { line_item_uuid: 'line-1' } });
