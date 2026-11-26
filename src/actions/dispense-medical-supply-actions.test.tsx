@@ -102,6 +102,33 @@ describe('DispenseMedicalSupplyActions', () => {
     );
   });
 
+  it('offers reject alongside dispense while nothing is billed', async () => {
+    givenDispenses([]);
+    givenBill('BLANK');
+    render(<DispenseMedicalSupplyActions order={order} />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reject medical supply request' }));
+
+    expect(showModal).toHaveBeenCalledWith('reject-medical-supply-request-modal', expect.objectContaining({ order }));
+  });
+
+  it('hides reject once the order is billed and says why', () => {
+    givenDispenses([]);
+    givenBill('PENDING');
+    render(<DispenseMedicalSupplyActions order={order} />);
+
+    expect(screen.queryByRole('button', { name: 'Reject medical supply request' })).not.toBeInTheDocument();
+    expect(screen.getByText('This order has a bill. Void it in billing before rejecting the order.')).toBeInTheDocument();
+  });
+
+  it('does not offer reject while a dispense is pending', () => {
+    givenDispenses([pending()]);
+    givenBill('BLANK');
+    render(<DispenseMedicalSupplyActions order={order} />);
+
+    expect(screen.queryByRole('button', { name: 'Reject medical supply request' })).not.toBeInTheDocument();
+  });
+
   it('passes the quantity of an existing bill line so the dispense matches it', async () => {
     givenDispenses([]);
     givenBill('PAID', { lineItem: { quantity: '3' } });

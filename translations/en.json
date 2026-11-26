@@ -123,6 +123,7 @@
   "testType": "Test type",
   "username": "Username",
   "validValueRequired": "A valid value is required",
+  "voidBillBeforeRejecting": "This order has a bill. Void it in billing before rejecting the order.",
   "waitingForClaimVisit": "Waiting for the SHA claim visit before hand-over.",
   "waitingForPayment": "Waiting for the bill to be paid.",
   "waitingForPreauthorization": "Waiting for pre-authorization.",

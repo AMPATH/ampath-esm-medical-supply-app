@@ -17,6 +17,7 @@ import {
 } from '../resources/commodity-dispense.resource';
 import { useInvalidateMedicalSupplyOrders } from '../resources/medical-supply.resources';
 import { type BillInvoice, type BillStatus, type Order } from '../types';
+import RejectMedicalSupplyRequestAction from './reject-medical-supply-request-action.component';
 import styles from './actions.scss';
 
 interface DispenseMedicalSupplyActionsProps {
@@ -170,9 +171,18 @@ const DispenseMedicalSupplyActions: React.FC<DispenseMedicalSupplyActionsProps> 
   }
 
   if (!pending) {
+    // Rejecting declines the order outright, so it is offered only before anything is billed, as on
+    // the Ordered tab. A pending dispense has to be cancelled first.
+    const billed = billStatus !== 'BLANK';
     return (
       <div className={styles.dispensePanel}>
+        {billed && (
+          <p className={styles.dispenseHint}>
+            {t('voidBillBeforeRejecting', 'This order has a bill. Void it in billing before rejecting the order.')}
+          </p>
+        )}
         <div className={styles.dispenseButtons}>
+          <RejectMedicalSupplyRequestAction order={order} billStatus={billStatus} />
           <Button className={styles.actionButton} size="sm" kind="primary" onClick={openDispenseModal}>
             {t('dispense', 'Dispense')}
           </Button>
