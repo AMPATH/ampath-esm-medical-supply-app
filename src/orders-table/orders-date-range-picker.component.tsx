@@ -3,13 +3,14 @@ import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { OpenmrsDateRangePicker, useAppContext } from '@openmrs/esm-framework';
 import { type DateFilterContext } from '../types';
+import { DATE_FILTER_CONTEXT } from '../commodity';
 import styles from './orders-date-range-picker.scss';
 
 export const OrdersDateRangePicker = () => {
   const { t } = useTranslation();
   const currentDate = new Date();
 
-  const { dateRange, setDateRange } = useAppContext<DateFilterContext>('medical-supply-date-filter') ?? {
+  const { dateRange, setDateRange } = useAppContext<DateFilterContext>(DATE_FILTER_CONTEXT) ?? {
     dateRange: [dayjs().startOf('day').toDate(), new Date()],
     setDateRange: () => {},
   };

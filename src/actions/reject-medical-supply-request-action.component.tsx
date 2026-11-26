@@ -34,7 +34,7 @@ const RejectMedicalSupplyRequestAction: React.FC<RejectMedicalSupplyRequestActio
       size="sm"
       onClick={launchRejectLabRequestModal}
     >
-      {t('rejectMedicalSupplyRequest', 'Reject medical supply request')}
+      {t('rejectOrder', 'Reject')}
     </Button>
   );
 };
